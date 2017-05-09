@@ -17144,7 +17144,8 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPasswordHistory]
 	@UserId             int,
 	@Password           nvarchar(128),
 	@PasswordSalt       nvarchar(128),
-	@Retained           int,
+	@PasswordsRetained  int,
+	@DaysRetained       int,
 	@CreatedByUserID    int
 AS
 	
@@ -17172,11 +17173,12 @@ AS
 	DELETE FROM {databaseOwner}{objectQualifier}PasswordHistory 
 	WHERE UserID=@UserId
 	  AND PasswordHistoryID NOT IN (
-		SELECT TOP (@Retained) PasswordHistoryID 
+		SELECT TOP (@PasswordsRetained) PasswordHistoryID 
 		FROM {databaseOwner}{objectQualifier}PasswordHistory
 		WHERE UserID=@UserId 
 		ORDER BY CreatedOnDate DESC
 		)
+	  AND DATEDIFF(day, CreatedOnDate, GETDATE()) > @DaysRetained
 
 	END
 GO
@@ -17249,8 +17251,20 @@ GO
 PRINT N'Creating {databaseOwner}[{objectQualifier}GetPasswordHistory]'
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPasswordHistory]
-	@UserID    int
+	@UserID             int,
+	@PasswordsRetained  int,
+	@DaysRetained       int
 AS
+	DELETE FROM {databaseOwner}{objectQualifier}PasswordHistory 
+	WHERE UserID=@UserId 
+	  AND PasswordHistoryID NOT IN (
+		SELECT TOP (@PasswordsRetained) PasswordHistoryID 
+		FROM {databaseOwner}{objectQualifier}PasswordHistory
+		WHERE UserID=@UserId 
+		ORDER BY CreatedOnDate DESC
+		)
+	  AND DATEDIFF(day, CreatedOnDate, GETDATE()) > @DaysRetained;
+
 	SELECT * 
 	FROM {databaseOwner}{objectQualifier}PasswordHistory 
 	WHERE UserID=@UserID
