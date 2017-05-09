@@ -17141,41 +17141,44 @@ GO
 PRINT N'Creating {databaseOwner}[{objectQualifier}AddPasswordHistory]'
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}AddPasswordHistory]
-    @UserId			int,
-    @Password			nvarchar(128),
-    @PasswordSalt		nvarchar(128),
-	@Retained			int,
-    @CreatedByUserID  	int
+	@UserId             int,
+	@Password           nvarchar(128),
+	@PasswordSalt       nvarchar(128),
+	@Retained           int,
+	@CreatedByUserID    int
 AS
+	
+	BEGIN
+	
+	INSERT INTO {databaseOwner}{objectQualifier}PasswordHistory (
+		UserId,
+		[Password],
+		PasswordSalt,
+		CreatedByUserID,
+		CreatedOnDate,
+		LastModifiedByUserID,
+		LastModifiedOnDate
+	)
+	VALUES (
+		@UserId,
+		@Password,
+		@PasswordSalt,
+		@CreatedByUserID,
+		GETDATE(),
+		@CreatedByUserID,
+		GETDATE()
+	)
 
-        BEGIN
-		
-          INSERT INTO {databaseOwner}{objectQualifier}PasswordHistory (
-            UserId,
-            [Password],
-            PasswordSalt,
-			CreatedByUserID,
-			CreatedOnDate,
-			LastModifiedByUserID,
-			LastModifiedOnDate
-          )
-          VALUES (
-            @UserId,
-            @Password,
-            @PasswordSalt,
-            
-			@CreatedByUserID,
-			getdate(),
-			@CreatedByUserID,
-			getdate()
-          )
+	DELETE FROM {databaseOwner}{objectQualifier}PasswordHistory 
+	WHERE UserID=@UserId
+	  AND PasswordHistoryID NOT IN (
+		SELECT TOP (@Retained) PasswordHistoryID 
+		FROM {databaseOwner}{objectQualifier}PasswordHistory
+		WHERE UserID=@UserId 
+		ORDER BY CreatedOnDate DESC
+		)
 
-		  DELETE FROM {databaseOwner}{objectQualifier}PasswordHistory where UserID=@UserId and PasswordHistoryID NOT IN (
-					SELECT TOP (@Retained) PasswordHistoryID from {databaseOwner}{objectQualifier}PasswordHistory
-					WHERE UserID=@UserId order by CreatedOnDate desc
-					)
-
-        END
+	END
 GO
 PRINT N'Creating {databaseOwner}[{objectQualifier}UpdateUserRole]'
 GO
@@ -17246,9 +17249,11 @@ GO
 PRINT N'Creating {databaseOwner}[{objectQualifier}GetPasswordHistory]'
 GO
 CREATE PROCEDURE {databaseOwner}[{objectQualifier}GetPasswordHistory]
-    @UserID			int
+	@UserID    int
 AS
-        SELECT * from {databaseOwner}{objectQualifier}PasswordHistory where UserID=@UserID
+	SELECT * 
+	FROM {databaseOwner}{objectQualifier}PasswordHistory 
+	WHERE UserID=@UserID
 GO
 PRINT N'Creating {databaseOwner}[{objectQualifier}SetFileHasBeenPublished]'
 GO
