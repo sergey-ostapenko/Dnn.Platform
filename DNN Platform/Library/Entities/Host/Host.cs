@@ -835,13 +835,13 @@ namespace DotNetNuke.Entities.Host
         }
 
         /// <summary>
-        /// Gets the number of days that passwords stored for password change comparison operations are stored - default is 0 (i.e. password storage is only governed by <see cref="MembershipNumberPasswords"/>)
+        /// Gets the number of days that must pass before a password can be reused - default is 0 (i.e. password reuse is only governed by <see cref="EnablePasswordHistory"/> and <see cref="MembershipNumberPasswords"/>)
         /// </summary>
-        public static int MembershipPasswordHistoryStorageDays
+        public static int MembershipDaysBeforePasswordReuse
         {
             get
             {
-                return HostController.Instance.GetInteger("MembershipPasswordHistoryStorageDays", 0);
+                return HostController.Instance.GetInteger("MembershipDaysBeforePasswordReuse", 0);
             }
         }
 

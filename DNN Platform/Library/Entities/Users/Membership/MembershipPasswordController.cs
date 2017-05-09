@@ -90,7 +90,7 @@ namespace DotNetNuke.Entities.Users.Membership
         {
             var settings = new MembershipPasswordSettings(portalId);
             List<PasswordHistory> history =
-                CBO.FillCollection<PasswordHistory>(_dataProvider.GetPasswordHistory(userId, settings.NumberOfPasswordsStored, settings.NumberOfDaysPasswordsStored));
+                CBO.FillCollection<PasswordHistory>(_dataProvider.GetPasswordHistory(userId, settings.NumberOfPasswordsStored, settings.NumberOfDaysBeforePasswordReuse));
             return history;
         }
 
@@ -123,7 +123,7 @@ namespace DotNetNuke.Entities.Users.Membership
 				{
 					if (autoAdd)
 					{
-						AddPasswordHistory(userId, newPassword, settings.NumberOfPasswordsStored, settings.NumberOfDaysPasswordsStored);
+						AddPasswordHistory(userId, newPassword, settings.NumberOfPasswordsStored, settings.NumberOfDaysBeforePasswordReuse);
 					}
 				}
 				else
