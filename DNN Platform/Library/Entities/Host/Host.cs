@@ -835,6 +835,17 @@ namespace DotNetNuke.Entities.Host
         }
 
         /// <summary>
+        /// Gets the number of days that passwords stored for password change comparison operations are stored - default is 0 (i.e. password storage is only governed by <see cref="MembershipNumberPasswords"/>)
+        /// </summary>
+        public static int MembershipPasswordHistoryStorageDays
+        {
+            get
+            {
+                return HostController.Instance.GetInteger("MembershipPasswordHistoryStorageDays", 0);
+            }
+        }
+
+        /// <summary>
         /// sets the HTTP Status code returned if IP address filtering is enabled on login
         /// and the users IP does not meet criteria -default is 403
         /// </summary>

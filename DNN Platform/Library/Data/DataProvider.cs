@@ -3317,14 +3317,14 @@ namespace DotNetNuke.Data
 
         #region Password History
 
-        public virtual IDataReader GetPasswordHistory(int userId)
+        public virtual IDataReader GetPasswordHistory(int userId, int passwordsRetained, int daysRetained)
         {
-            return ExecuteReader("GetPasswordHistory", GetNull(userId));
+            return ExecuteReader("GetPasswordHistory", GetNull(userId), passwordsRetained, daysRetained);
         }
 
-        public virtual void AddPasswordHistory(int userId, string password, string passwordHistory, int retained)
+        public virtual void AddPasswordHistory(int userId, string password, string passwordHistory, int passwordsRetained, int daysRetained)
         {
-            ExecuteNonQuery("AddPasswordHistory", GetNull(userId), password, passwordHistory, retained, GetNull(userId));
+            ExecuteNonQuery("AddPasswordHistory", GetNull(userId), password, passwordHistory, passwordsRetained, daysRetained, GetNull(userId));
         }
 
         #endregion
